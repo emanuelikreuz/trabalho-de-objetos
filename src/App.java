@@ -20,38 +20,98 @@ public class App {
         clientes.add(new Cliente("Bob", 25));
         clientes.add(new Cliente("Carlos", 40));
 
-        // Interação com o usuário
+        int opcao;
+        do {
+            // Exibir menu
+            System.out.println("\nMenu:");
+            System.out.println("1. Listar todos os produtos");
+            System.out.println("2. Listar todos os clientes");
+            System.out.println("3. Filtrar produtos por preço");
+            System.out.println("4. Filtrar clientes por idade");
+            System.out.println("5. Adicionar um novo produto");
+            System.out.println("6. Sair");
+            System.out.print("Escolha uma opção: ");
+            opcao = scanner.nextInt();
+            scanner.nextLine(); // Consumir a nova linha
+
+            switch (opcao) {
+                case 1:
+                    listarProdutos(produtos);
+                    break;
+                case 2:
+                    listarClientes(clientes);
+                    break;
+                case 3:
+                    filtrarProdutosPorPreco(scanner, produtos);
+                    break;
+                case 4:
+                    filtrarClientesPorIdade(scanner, clientes);
+                    break;
+                case 5:
+                    adicionarProduto(scanner, produtos);
+                    break;
+                case 6:
+                    System.out.println("Saindo...");
+                    break;
+                default:
+                    System.out.println("Opção inválida. Tente novamente.");
+            }
+        } while (opcao != 6);
+
+        scanner.close();
+    }
+
+    private static void listarProdutos(List<Produto> produtos) {
         System.out.println("Produtos disponíveis:");
         produtos.forEach(System.out::println);
+    }
 
+    private static void listarClientes(List<Cliente> clientes) {
         System.out.println("\nClientes:");
         clientes.forEach(System.out::println);
+    }
 
-        // Filtrando produtos com preço maior que 1000
-        System.out.println("\nProdutos com preço maior que R$1000:");
-        List<Produto> produtosCaros = produtos.stream()
-                                              .filter(p -> p.getPreco() > 1000)
-                                              .collect(Collectors.toList());
-        produtosCaros.forEach(System.out::println);
+    private static void filtrarProdutosPorPreco(Scanner scanner, List<Produto> produtos) {
+        System.out.print("Digite o preço mínimo para filtrar os produtos: ");
+        double precoMinimo = scanner.nextDouble();
+        scanner.nextLine(); // Consumir a nova linha
 
-        // Filtrando clientes com idade maior que 30
-        System.out.println("\nClientes com idade maior que 30 anos:");
-        List<Cliente> clientesVelhos = clientes.stream()
-                                                .filter(c -> c.getIdade() > 30)
-                                                .collect(Collectors.toList());
-        clientesVelhos.forEach(System.out::println);
+        List<Produto> produtosFiltrados = produtos.stream()
+                                                  .filter(p -> p.getPreco() > precoMinimo)
+                                                  .collect(Collectors.toList());
+        if (produtosFiltrados.isEmpty()) {
+            System.out.println("Nenhum produto encontrado com preço maior que R$" + precoMinimo);
+        } else {
+            System.out.println("Produtos com preço maior que R$" + precoMinimo + ":");
+            produtosFiltrados.forEach(System.out::println);
+        }
+    }
 
-        // Interação adicional
-        System.out.print("\nDigite o nome de um novo produto: ");
+    private static void filtrarClientesPorIdade(Scanner scanner, List<Cliente> clientes) {
+        System.out.print("Digite a idade mínima para filtrar os clientes: ");
+        int idadeMinima = scanner.nextInt();
+        scanner.nextLine(); // Consumir a nova linha
+
+        List<Cliente> clientesFiltrados = clientes.stream()
+                                                  .filter(c -> c.getIdade() > idadeMinima)
+                                                  .collect(Collectors.toList());
+        if (clientesFiltrados.isEmpty()) {
+            System.out.println("Nenhum cliente encontrado com idade maior que " + idadeMinima + " anos.");
+        } else {
+            System.out.println("Clientes com idade maior que " + idadeMinima + " anos:");
+            clientesFiltrados.forEach(System.out::println);
+        }
+    }
+
+    private static void adicionarProduto(Scanner scanner, List<Produto> produtos) {
+        System.out.print("Digite o nome do novo produto: ");
         String nomeProduto = scanner.nextLine();
         System.out.print("Digite o preço do produto: ");
         double precoProduto = scanner.nextDouble();
         scanner.nextLine(); // Consumir a nova linha
 
-        produtos.add(new Produto(nomeProduto, precoProduto));
-        System.out.println("Produto adicionado: " + produtos.get(produtos.size() - 1));
-
-        // Fechar o scanner
-        scanner.close();
+        Produto novoProduto = new Produto(nomeProduto, precoProduto);
+        produtos.add(novoProduto);
+        System.out.println("Produto adicionado: " + novoProduto);
     }
 }
